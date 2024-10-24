@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Azure Latency Checker</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
     <div class="container">
         <nav class="sidebar">
@@ -25,7 +23,7 @@
             <main>
                 <section id="azureRegions" style="display: none;">
                     <h2>Azure Regions Health Status</h2>
-                    <div id="regionsStatus"></div>
+                    <div id="regionsStatus" class="card-container"></div>
                 </section>
 
                 <section id="latencySection">
@@ -38,19 +36,19 @@
 
     <script>
         // Event listeners for menu links
-        document.getElementById("azureRegionsLink").addEventListener("click", function () {
+        document.getElementById("azureRegionsLink").addEventListener("click", function() {
             document.getElementById("azureRegions").style.display = "block";
             document.getElementById("latencySection").style.display = "none";
             fetchEndpointsHealth();
         });
 
-        document.getElementById("latencyLink").addEventListener("click", function () {
+        document.getElementById("latencyLink").addEventListener("click", function() {
             document.getElementById("azureRegions").style.display = "none";
             document.getElementById("latencySection").style.display = "block";
         });
 
         // Event listener for latency button
-        document.getElementById("latencyButton").addEventListener("click", async function () {
+        document.getElementById("latencyButton").addEventListener("click", async function() {
             const response = await fetch('/test-latency');
             const resultJson = await response.json();
             let resultText = '<h2>Latency Results</h2><ul>';
@@ -65,15 +63,18 @@
         async function fetchEndpointsHealth() {
             const response = await fetch('/check-health');
             const healthStatuses = await response.json();
-            let regionsHtml = '<h2>Endpoint Health Status</h2><ul>';
+            let regionsHtml = '';
             for (const [region, status] of Object.entries(healthStatuses)) {
-                regionsHtml += `<li><strong>${region}:</strong> ${status}</li>`;
+                const statusClass = status.toLowerCase(); // Using status as class for styling
+                regionsHtml += `
+                    <div class="card ${statusClass}">
+                        <h3 class="region-title">${region}</h3>
+                        <p class="status-text">Status: <span class="status ${statusClass}">${status}</span></p>
+                    </div>
+                `;
             }
-            regionsHtml += '</ul>';
             document.getElementById("regionsStatus").innerHTML = regionsHtml;
         }
     </script>
-
 </body>
-
 </html>
