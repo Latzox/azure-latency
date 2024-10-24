@@ -1,0 +1,14 @@
+{
+    "localapi": {
+        "latency_url": "http://172.20.195.80:8080/api/latency",
+        "health_url": "http://172.20.195.80:8080/api/health"
+    },
+    "switzerlandnorth": {
+        "latency_url": "https://endpoint-switzerlandnorth.azurelatency.com/api/latency",
+        "health_url": "https://endpoint-switzerlandnorth.azurelatency.com/api/health"
+    },
+    "eastus": {
+        "latency_url": "https://endpoint-eastus.azurelatency.com/api/latency",
+        "health_url": "https://endpoint-eastus.azurelatency.com/api/health"
+    }
+}

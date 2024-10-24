@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Latency Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <h2>Menu</h2>
+            <ul>
+                <li><a href="#" id="azureRegionsLink">Azure Regions</a></li>
+                <li><a href="#" id="latencyLink">Latency Check</a></li>
+            </ul>
+        </nav>
+        <div class="content">
+            <header>
+                <h1>Azure Region Latency</h1>
+                <p>Test your latency to Azure regions worldwide!</p>
+            </header>
+            <main>
+                <section id="azureRegions" style="display: none;">
+                    <h2>Azure Regions Health Status</h2>
+                    <div id="regionsStatus"></div>
+                </section>
+
+                <section id="latencySection">
+                    <button id="latencyButton">Test Latency</button>
+                    <div id="results"></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Event listeners for menu links
+        document.getElementById("azureRegionsLink").addEventListener("click", function () {
+            document.getElementById("azureRegions").style.display = "block";
+            document.getElementById("latencySection").style.display = "none";
+            fetchEndpointsHealth();
+        });
+
+        document.getElementById("latencyLink").addEventListener("click", function () {
+            document.getElementById("azureRegions").style.display = "none";
+            document.getElementById("latencySection").style.display = "block";
+        });
+
+        // Event listener for latency button
+        document.getElementById("latencyButton").addEventListener("click", async function () {
+            const response = await fetch('/test-latency');
+            const resultJson = await response.json();
+            let resultText = '<h2>Latency Results</h2><ul>';
+            for (const [region, latency] of Object.entries(resultJson)) {
+                resultText += `<li><strong>${region}:</strong> ${latency}</li>`;
+            }
+            resultText += '</ul>';
+            document.getElementById("results").innerHTML = resultText;
+        });
+
+        // Function to fetch endpoint health status
+        async function fetchEndpointsHealth() {
+            const response = await fetch('/check-health');
+            const healthStatuses = await response.json();
+            let regionsHtml = '<h2>Endpoint Health Status</h2><ul>';
+            for (const [region, status] of Object.entries(healthStatuses)) {
+                regionsHtml += `<li><strong>${region}:</strong> ${status}</li>`;
+            }
+            regionsHtml += '</ul>';
+            document.getElementById("regionsStatus").innerHTML = regionsHtml;
+        }
+    </script>
+
+</body>
+
+</html>
